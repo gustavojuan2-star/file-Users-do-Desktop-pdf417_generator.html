@@ -6,13 +6,13 @@
   <title>PDF417 Generator (Demo)</title>
 
   <style>
-    body { font-family: system-ui, -apple-system, sans-serif; margin: 16px; }
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
-    textarea { width: 100%; min-height: 180px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-    input, select, button { font-size: 14px; padding: 8px; }
-    .controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 12px; }
-    .preview { border: 1px solid #ddd; padding: 12px; border-radius: 8px; min-height: 220px; overflow: auto; }
-    .small { font-size: 12px; color: #555; line-height: 1.4; }
+    body { font-family: system-ui, -apple-system, sans-serif; margin: 16-px; }
+    .row { display: grid; grid-template-columns: 1-fr 1;: 16px; align-items: start; }
+    textarea { width: 100-%; min-height: 180-px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    input, select, button { font-size: 14-px; padding: 8-px; }
+    .controls { display: flex; flex-wrap: wrap; gap: 8-px; margin: 8-px 0 12-px; }
+    .preview { border: 1-px solid #ddd; padding: 12-px; border-radius: 8-px; min-height: 220-px; overflow: auto; }
+    .small { font-size: 12-px; color: #555; line-height: 1.4; }
     .error { color: #b00020; white-space: pre-wrap; }
     .ok { color: #0a7a0a; }
   </style>
@@ -22,13 +22,13 @@
   <h2>PDF417 Generator (Browser Demo)</h2>
 
   <div class="small">
-    Paste TSV (tab-separated) rows below. Each non-empty line becomes one barcode payload.
+    Paste csv rows below. Each labeled line becomes one barcode payload.
     Output renders as SVG.
   </div>
 
-  <div class="row" style="margin-top:12px;">
+  <div class="row" style="margin-top:10-px;">
     <div>
-      <label><b>Input (TSV rows)</b></label>
+      <label><b>Input ( rows)</b></label>
       <textarea id="input" placeholder="Example:
 NOVA1	FS-9K2D-4M7Q	DRIVER-001
 NOVA1	FS-AAA	DRIVER-002"></textarea>
@@ -78,10 +78,10 @@ NOVA1	FS-AAA	DRIVER-002"></textarea>
     </div>
 
     <div>
-      <label><b>Preview (first row)</b></label>
+      <label><b>Preview (all rows)</b></label>
       <div id="preview" class="preview"></div>
-      <div class="small" style="margin-top:8px;">
-        Only the first non-empty row is rendered to keep it fast.
+      <div class="small" style="margin-top:8-px;">
+        all row's are rendered to keep it fast.
       </div>
     </div>
   </div>
