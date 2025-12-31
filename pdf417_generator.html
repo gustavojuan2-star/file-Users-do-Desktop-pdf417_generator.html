@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PDF417 Generator (Demo)</title>
+
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; margin: 16px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+    textarea { width: 100%; min-height: 180px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    input, select, button { font-size: 14px; padding: 8px; }
+    .controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 12px; }
+    .preview { border: 1px solid #ddd; padding: 12px; border-radius: 8px; min-height: 220px; overflow: auto; }
+    .small { font-size: 12px; color: #555; line-height: 1.4; }
+    .error { color: #b00020; white-space: pre-wrap; }
+    .ok { color: #0a7a0a; }
+  </style>
+</head>
+
+<body>
+  <h2>PDF417 Generator (Browser Demo)</h2>
+
+  <div class="small">
+    Paste TSV (tab-separated) rows below. Each non-empty line becomes one barcode payload.
+    Output renders as SVG.
+  </div>
+
+  <div class="row" style="margin-top:12px;">
+    <div>
+      <label><b>Input (TSV rows)</b></label>
+      <textarea id="input" placeholder="Example:
+NOVA1	FS-9K2D-4M7Q	DRIVER-001
+NOVA1	FS-AAA	DRIVER-002"></textarea>
+
+      <div class="controls">
+        <label>
+          Columns:
+          <select id="cols">
+            <option>3</option>
+            <option selected>4</option>
+            <option>5</option>
+            <option>6</option>
+          </select>
+        </label>
+
+        <label>
+          Security:
+          <select id="sec">
+            <option>0</option>
+            <option>1</option>
+            <option>2</option>
+            <option selected>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+          </select>
+        </label>
+
+        <label>
+          Scale:
+          <input id="scale" type="number" min="1" max="10" value="3" style="width:70px;">
+        </label>
+
+        <label>
+          Ratio:
+          <input id="ratio" type="number" min="1" max="10" value="4" style="width:70px;">
+        </label>
+
+        <button id="render" type="button">Render</button>
+        <button id="downloadSvg" type="button">Download SVG</button>
+      </div>
+
+      <div id="status" class="small"></div>
+      <div id="err" class="error"></div>
+    </div>
+
+    <div>
+      <label><b>Preview (first row)</b></label>
+      <div id="preview" class="preview"></div>
+      <div class="small" style="margin-top:8px;">
+        Only the first non-empty row is rendered to keep it fast.
+      </div>
+    </div>
+  </div>
+
+  <!-- bwip-js -->
+  <script src="https://cdn.jsdelivr.net/npm/@bwip-js/browser@4.8.0/dist/bwip-js-min.js"></script>
+
+  <script>
+    const $ = id => document.getElementById(id);
+
+    function firstNonEmptyLine(text) {
+      return text.split(/\r?\n/).map(s => s.trim()).find(s => s) || "";
+    }
+
+    function renderFirst() {
+      $("err").textContent = "";
+      $("status").textContent = "";
+
+      const line = firstNonEmptyLine($("input").value);
+      if (!line) {
+        $("preview").innerHTML = "";
+        $("status").textContent = "Paste at least one row.";
+        return;
+      }
+
+      try {
+        const svg = bwipjs.toSVG({
+          bcid: "pdf417",
+          text: line,
+          columns: +$("cols").value,
+          eclevel: +$("sec").value,
+          scale: +$("scale").value,
+          ratio: +$("ratio").value,
+          includetext: false
+        });
+
+        $("preview").innerHTML = svg;
+        $("status").innerHTML =
+          `<span class="ok">Rendered.</span> Payload length: ${line.length}`;
+        window.__lastSvg = svg;
+      } catch (e) {
+        $("preview").innerHTML = "";
+        $("err").textContent = String(e && e.stack ? e.stack : e);
+      }
+    }
+
+    function downloadSvg() {
+      if (!window.__lastSvg) return;
+      const blob = new Blob([window.__lastSvg], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "pdf417.svg";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    $("render").addEventListener("click", renderFirst);
+    $("downloadSvg").addEventListener("click", downloadSvg);
+    renderFirst();
+  </script>
+</body>
+</html>
